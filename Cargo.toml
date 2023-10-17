@@ -1,0 +1,24 @@
+[package]
+name = "faer-joss-bench"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+faer-core = { version = "0.13.0", features = ["nightly"] }
+faer-qr   = { version = "0.13.0", features = ["nightly"] }
+faer-evd  = { version = "0.13.0", features = ["nightly"] }
+faer-svd  = { version = "0.13.0", features = ["nightly"] }
+
+blas-sys = "0.7.1"
+lapack-sys = "0.14.0"
+lapacke-sys = "0.1.4"
+rand = "0.8.5"
+dyn-stack = "0.10.0"
+
+openmp-sys = "1.2.3"
+qd = "0.4.0"
+
+[build-dependencies]
+cc = "1.0.83"
