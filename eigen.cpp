@@ -8,6 +8,7 @@
 #include <eigen3/Eigen/SVD>
 #include <iostream>
 #include <limits>
+#include <fstream>
 
 using f32 = float;
 using f64 = double;
@@ -251,12 +252,14 @@ template <typename F> auto timeit(F f) -> double {
 }
 
 auto main() -> int {
+  std::ofstream file("eigen");
   {
     using Mat = Eigen::Matrix<f64, -1, -1>;
     int ns[] = {4,   8,    16,   32,   64,   128,  256,  512,
                 768, 1000, 2000, 3000, 4000, 5000, 7500, 10000};
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_matmul = [" << '\n';
+    file << "eigen_matmul = [" << '\n';
     for (auto n : ns) {
       Mat c(n, n);
       Mat a(n, n);
@@ -269,10 +272,13 @@ auto main() -> int {
       double beta = 1.0;
       auto time = timeit([&] { c.noalias() += a * b; });
       std::cout << time << ',' << std::endl;
+      file << time << ',' << std::endl;
     }
     std::cout << ']' << '\n';
+    file << ']' << '\n';
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_qr = [" << '\n';
+    file << "eigen_qr = [" << '\n';
     for (auto n : ns) {
       Mat c(n, n);
       Mat work(n, n);
@@ -284,10 +290,13 @@ auto main() -> int {
 
       auto time = timeit([&] { b.compute(c); });
       std::cout << time << ',' << std::endl;
+      file << time << ',' << std::endl;
     }
     std::cout << ']' << '\n';
+    file << ']' << '\n';
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_evd = [" << '\n';
+    file << "eigen_evd = [" << '\n';
     for (auto n : ns) {
       if (n > 4000) continue;
       Mat c(n, n);
@@ -298,15 +307,18 @@ auto main() -> int {
 
       auto time = timeit([&] { evd.compute(c); });
       std::cout << time << ',' << std::endl;
+      file << time << ',' << std::endl;
     }
     std::cout << ']' << '\n';
+    file << ']' << '\n';
   }
 
   {
     using Mat = Eigen::Matrix<f128, -1, -1>;
     int ns[] = {4, 8, 16, 32, 64, 128, 256, 512, 768, 1000, 2000, 3000};
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_matmul_f128 = [" << '\n';
+    file << "eigen_matmul_f128 = [" << '\n';
     for (auto n : ns) {
       Mat c(n, n);
       Mat a(n, n);
@@ -319,10 +331,13 @@ auto main() -> int {
       double beta = 1.0;
       auto time = timeit([&] { c.noalias() += a * b; });
       std::cout << time << ',' << std::endl;
+      file << time << ',' << std::endl;
     }
     std::cout << ']' << '\n';
+    file << ']' << '\n';
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_qr_f128 = [" << '\n';
+    file << "eigen_qr_f128 = [" << '\n';
     for (auto n : ns) {
       Mat c(n, n);
       Mat work(n, n);
@@ -334,10 +349,13 @@ auto main() -> int {
 
       auto time = timeit([&] { b.compute(c); });
       std::cout << time << ",\n";
+      file << time << ",\n";
     }
     std::cout << ']' << '\n';
+    file << ']' << '\n';
 
-    std::cout << '[' << '\n';
+    std::cout << "eigen_evd_f128 = [" << '\n';
+    file << "eigen_evd_f128 = [" << '\n';
     for (auto n : ns) {
       if (n > 2000) continue;
       Mat c(n, n);
@@ -348,7 +366,9 @@ auto main() -> int {
 
       auto time = timeit([&] { evd.compute(c); });
       std::cout << time << ',' << std::endl;
+      file << time << ',' << std::endl;
     }
     std::cout << ']' << std::endl;
+    file << ']' << std::endl;
   }
 }

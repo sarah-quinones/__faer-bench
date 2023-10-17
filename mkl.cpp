@@ -1,10 +1,11 @@
 #include <eigen3/Eigen/Core>
 
 #include <chrono>
+#include <fstream>
 #include <iostream>
 
-#include <mkl/mkl_lapacke.h>
 #include <mkl/mkl_cblas.h>
+#include <mkl/mkl_lapacke.h>
 
 template <typename F> auto time1(F f) -> double {
   auto start = std::chrono::steady_clock::now();
@@ -32,9 +33,13 @@ template <typename F> auto timeit(F f) -> double {
 }
 
 auto main() -> int {
+  std::ofstream file("mkl");
+
   using Mat = Eigen::Matrix<double, -1, -1>;
   int ns[] = {4,   8,    16,   32,   64,   128,  256,  512,
               768, 1000, 2000, 3000, 4000, 5000, 7500, 10000};
+  std::cout << "mkl_matmul = [" << '\n';
+  file << "mkl_matmul = [" << '\n';
   for (auto n : ns) {
     Mat c(n, n);
     Mat a(n, n);
@@ -50,8 +55,13 @@ auto main() -> int {
                   a.data(), n, b.data(), n, beta, c.data(), n);
     });
     std::cout << time << ',' << std::endl;
+    file << time << ',' << std::endl;
   }
+  std::cout << ']' << '\n';
+  file << ']' << '\n';
 
+  std::cout << "mkl_qr = [" << '\n';
+  file << "mkl_qr = [" << '\n';
   for (auto n : ns) {
     Mat c(n, n);
     Mat work(n, n);
@@ -65,8 +75,13 @@ auto main() -> int {
                           work.data(), (n * n));
     });
     std::cout << time << ',' << std::endl;
+    file << time << ',' << std::endl;
   }
+  std::cout << ']' << '\n';
+  file << ']' << '\n';
 
+  std::cout << "mkl_evd = [" << '\n';
+  file << "mkl_evd = [" << '\n';
   for (auto n : ns) {
     Mat c(n, n);
     Mat work(n, n);
@@ -85,5 +100,8 @@ auto main() -> int {
                          work.data(), (n * n));
     });
     std::cout << time << ',' << std::endl;
+    file << time << ',' << std::endl;
   }
+  std::cout << ']' << '\n';
+  file << ']' << '\n';
 }
