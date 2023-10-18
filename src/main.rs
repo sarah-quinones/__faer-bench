@@ -38,7 +38,7 @@ fn main() {
         4, 8, 16, 32, 64, 128, 256, 512, 768, 1000, 2000, 3000, 4000, 5000, 7500, 10000,
     ];
 
-    let n_threads = "12";
+    let n_threads = &*std::thread::available_parallelism().unwrap().to_string();
 
     std::env::set_var("RAYON_NUM_THREADS", n_threads);
     std::env::set_var("BLIS_NUM_THREADS", n_threads);
